@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: pyrankagg
+Version: 2.3
+Summary: Python Package for Rank Aggregation
+Home-page: https://github.com/thelahunginjeet/pyrankagg
+Author: Kevin Brown
+Author-email: kevin.s.brown@uconn.edu
+License: BSD-3
+Classifier: License :: OSI Approved :: BSD-3 License
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Scientists
+Classifier: Programming Language :: Python
+Classifier: Topic :: Statistics
+License-File: LICENSE

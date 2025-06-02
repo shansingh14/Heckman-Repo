@@ -1,0 +1,14 @@
+*.DS_Store
+*.zip
+*.JPG
+*.jpg
+*.csv
+*.o
+*.txt
+*.pyc
+*.ipynb_checkpoints
+*.vscode
+*.png
+/evaluation/generated_data
+/evaluation/data
+/ltrc_yahoo
