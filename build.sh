@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd svm_proprank
+cd evaluation/svm_proprank
 make
 
 cd ../lib/pyrankagg
