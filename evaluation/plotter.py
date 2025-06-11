@@ -24,14 +24,14 @@ def plot_init(fsize, xlabel, ylabel):
     plt.ylabel(ylabel, fontsize=fsize+10)
     
 
-def draw_multi_y_column(df, num_plots, labels, xlabel, ylabel, filename, fmt='eps'):
+def draw_multi_y_column(df, num_plots, labels, xlabel, ylabel, filename, fmt='png'):
     columns = list(df.columns)
     
     xcol = columns[0]
     ycols = columns[1:]
 
     # TODO: clean up this part
-    ycols[2], ycols[3] = ycols[3], ycols[2]
+    # ycols[2], ycols[3] = ycols[3], ycols[2]
     # labels[2], labels[3] = labels[3], labels[2]
 
     plot_init(fsize=32, xlabel=xlabel, ylabel=ylabel)
@@ -47,7 +47,7 @@ def draw_multi_y_column(df, num_plots, labels, xlabel, ylabel, filename, fmt='ep
         legend_handles.append(line)
         ls += 1
 
-    legend_handles[2], legend_handles[3] = legend_handles[3], legend_handles[2]
+    # legend_handles[2], legend_handles[3] = legend_handles[3], legend_handles[2]
 
     metric_suffix = filename.split('.')[-2].split('_')[-1]
     is_noisy = filename.split('_')[0] == 'noisy'
@@ -78,9 +78,9 @@ def draw_multi_y_column(df, num_plots, labels, xlabel, ylabel, filename, fmt='ep
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-res', default='15_pass_eta1_combinedw_arrr.csv', help='combined result file.')
-    parser.add_argument('-out', default='', help='output image filename.')
-    parser.add_argument('-fmt', default='eps', help='image format.')
+    parser.add_argument('-res', default='results/2pass_combined_eta0_first_arrr.csv', help='combined result file.')
+    parser.add_argument('-out', default='plots/2pass_eta1_combined_ndcg.png', help='output image filename.')
+    parser.add_argument('-fmt', default='png', help='image format.')
     args = parser.parse_args()
 
     results = pd.read_csv(args.res)

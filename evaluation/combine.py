@@ -1,12 +1,13 @@
 import os
 import pdb
 import argparse
+import traceback
 
 import numpy as np
 import pandas as pd
 
 from sklearn.linear_model import LogisticRegression
-from pyrankagg.rankagg import FullListRankAggregator
+from lib.pyrankagg.rankagg import FullListRankAggregator
 
 from combine_utils import *
 
@@ -84,49 +85,53 @@ def rank_aggregate(eval_data_train, eval_data_test, X_cols, Y_col):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-hr', default='data/result/svm_eta2_first', help='heckman results csv.')
-    parser.add_argument('-pr', default='psvm_results/svm_eta2_first', help='predicrions from psvm.')
-    parser.add_argument('-nr', default='nsvm_results/svm_eta2_first', help='predicrions from psvm.')
-    parser.add_argument('-n', type=int, default='29', help='max threshold to combine')
-    parser.add_argument('-eta', type=str, default='2', help='eta.')
-    parser.add_argument('-out', default='results/10_pass_combined_eta2_first.csv', help='combined results csv.')
+    parser.add_argument('-hr', default='data/result/svm_eta.5_first', help='heckman results csv.')
+    # parser.add_argument('-pr', default='psvm_results/svm_eta0_first', help='predicrions from psvm.')
+    parser.add_argument('-nr', default='nsvm_results/svm_eta.5_first', help='predicrions from psvm.')
+    parser.add_argument('-n', type=int, default='5', help='max threshold to combine')
+    parser.add_argument('-eta', type=str, default='.5', help='eta.')
+    parser.add_argument('-out', default='results/5pass_combined_eta.5_first.csv', help='combined results csv.')
     args = parser.parse_args()
 
     metrics = ['arrr', 'mrr1', 'ndcg_10']
-    algos = ['naive-svm', 'prop-svm', 'heckman']
-    algos_to_combine = ['prop-svm', 'heckman']
-    combine_methods = ['combinedw', 'combined-agg']
-    combine_map = {'combinedw' : combine_weight, 'combined-agg': rank_aggregate}
+    algos = ['naive-svm', 'heckman']
+    # algos_to_combine = ['naive-svm', 'heckman']
+    # algos_to_combine = []
+    # combine_methods = ['combinedw', 'combined-agg']
+    # combine_map = {'combinedw' : combine_weight, 'combined-agg': rank_aggregate}
 
-    results = create_custom_df('result', algos + combine_methods, metrics)
+    results = create_custom_df('result', algos, metrics)
 
     for i in range(args.n+1):
         print('combining see %d' % i)
         try:
             # Load training scores and combine   
-            file_heckman_train_result = os.path.join(args.hr, 'train_scores_see%d_%s.csv' % (i, args.eta))
-            file_psvm_train_result = os.path.join(args.pr, 'prediction_train_see%d.txt' % (i))
-            eval_data_train = combine(file_heckman_train_result, file_psvm_train_result, 's_score')
-            eval_data_train = rank(eval_data_train, algos_to_combine)
+            # file_heckman_train_result = os.path.join(args.hr, 'train_scores_see%d_%s.csv' % (i, args.eta))
+            # file_psvm_train_result = os.path.join(args.pr, 'prediction_train_see%d.txt' % (i))
+            # file_nsvm_train_result = os.path.join(args.nr, 'naive_prediction_train_see%d.txt' % (i))
+            # eval_data_train = combine(file_heckman_train_result, '', 's_score')
+            # eval_data_train = rank(eval_data_train, algos_to_combine)
 
             # Load test scores and combine
             file_heckman_test_result = os.path.join(args.hr, 'test_scores_see%d_%s.csv' % (i, args.eta))
-            file_psvm_test_result = os.path.join(args.pr, 'prediction_test_see%d.txt' % (i))
+            # file_psvm_test_result = os.path.join(args.pr, 'prediction_test_see%d.txt' % (i))
             file_nsvm_test_result = os.path.join(args.nr, 'naive_prediction_test_see%d.txt' % (i))
-            eval_data_test = combine(file_heckman_test_result, file_psvm_test_result, 's_score', file_nsvm_test_result, 'n_score')
+            eval_data_test = combine(file_heckman_test_result, file_nsvm_test_result, 'n_score')
             eval_data_test = rank(eval_data_test, algos)
-        except:
-            continue
+        except Exception as e:
+            traceback.print_exc()
+            exit(0)
 
         # Predict on test scores
-        X_cols = [rank_map[algo] for algo in algos_to_combine]
-
-        for comb_name in combine_methods:
-            comb_method = combine_map[comb_name]
-            eval_data_test[score_map[comb_name]] = comb_method(eval_data_train, eval_data_test, X_cols, 'C')
+        # X_cols = [rank_map[algo] for algo in algos_to_combine]
+        #
+        # for comb_name in combine_methods:
+        #     comb_method = combine_map[comb_name]
+        #     eval_data_test[score_map[comb_name]] = comb_method(eval_data_train, eval_data_test, X_cols, 'C')
 
         # generate ranking based on final score
-        all_algos = algos + combine_methods
+        # all_algos = algos + combine_methods
+        all_algos = algos
         result_df = evaluate(eval_data_test, all_algos, metrics)
 
         results['see'].append(i)

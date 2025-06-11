@@ -57,7 +57,8 @@ def heckman(train):
 
 
 def eval(df, params,score_name='h_score'):
-    X_test = df[df.columns.drop(['qid', 'C', 'S'])]
+    # X_test = df[df.columns.drop(['qid', 'C', 'S'])]
+    X_test = df[df.columns.drop(['qid', 'C', 'S', 'R', 'T', 'SC'])]
     Eval = df[['qid', 'C']]
 
     Eval[score_name] = norm.cdf(np.matmul(X_test, params))

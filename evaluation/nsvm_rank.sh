@@ -11,7 +11,7 @@ mkdir -p $out
 for i in $(seq -f "%g" 0 $n)
 do
     echo "naive train "$i
-    svm_proprank/svm_proprank_learn -c 0.01 $ds'/eta'$ETA'/first_run/naive_svm.'$pass'pass.see'$i'.eta'$ETA'.train' 'temp/model'$i > /dev/null &
+    ../generation/svm_rank/svm_rank_learn -c 200.0 -c 0.01 $ds'/eta'$ETA'/first_run/naive_svm.'$pass'pass.see'$i'.eta'$ETA'.train' 'temp/model'$i > /dev/null
 done
 wait
 
@@ -19,7 +19,7 @@ wait
 for i in $(seq -f "%g" 0 $n)
 do
     echo "naive predict test "$i
-    svm_proprank/svm_proprank_classify $ds'/eta'$ETA'/first_run/naive_svm.'$pass'pass.see'$i'.eta'$ETA'.test' 'temp/model'$i $out'/naive_prediction_test_see'$i'.txt' > /dev/null &
+    ../generation/svm_rank/svm_rank_classify $ds'/eta'$ETA'/first_run/naive_svm.'$pass'pass.see'$i'.eta'$ETA'.test' 'temp/model'$i $out'/naive_prediction_test_see'$i'.txt' > /dev/null &
 done
 wait
 
